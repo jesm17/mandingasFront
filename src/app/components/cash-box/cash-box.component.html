@@ -1,0 +1,147 @@
+<div class="container text-center mt-2">
+  <div class="containerSale pt-2">
+    <form [formGroup]="formForSale"></form>
+    <div class="row">
+      <div class="col align-self-center">
+        <mat-form-field>
+          <mat-label>valor venta</mat-label>
+          <input
+            matInput
+            placeholder="Valor vendido"
+            required
+            type="number"
+            [formControl]="valueSale"
+            required
+            min="0"
+            class="valueSale"
+            value="0"
+          />
+          <span matTextPrefix> <i class="bi bi-cash-coin"></i>&nbsp;</span>
+
+          <mat-error *ngIf="valueSale.invalid">
+            {{ messageErrorValue() }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col align-self-center">
+        <mat-form-field>
+          <mat-label>Nombre cliente</mat-label>
+          <input
+            matInput
+            placeholder="Nombre del cliente"
+            required
+            type="text"
+            [formControl]="clientName"
+            required
+            min="0"
+          />
+          <span matTextPrefix><i class="bi bi-person-fill"></i> &nbsp;</span>
+
+          <mat-error *ngIf="clientName.invalid">
+            {{ messageErrorClient() }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col align-self-center">
+        <button
+          mat-raised-button
+          (click)="addSale()"
+          disabled="{{ formForSale.invalid }}"
+        >
+          Agregar venta <i class="bi bi-plus" style="font-size: 17px"></i>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="container text-center">
+        <h6 class="viewTotalSales">
+          Total ventas:
+          <span>
+            {{ dataToDisplay.length }}
+          </span>
+        </h6>
+      </div>
+    </div>
+    <div class="row">
+      <div class="container text-center">
+        <h6 class="viewTotalSales">
+          Total valor ventas:
+          <span>
+            {{ totalSales | currency : "COP" : "symbol-narrow" : "4.2-2" }}💸
+          </span>
+        </h6>
+      </div>
+    </div>
+  </div>
+  <section>
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+      <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>
+          <i class="bi bi-list-ol i_table"></i>
+        </th>
+        <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="clientName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-file-person-fill i_table"></i>&nbsp;Nombre cliente
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.clientName }}</td>
+      </ng-container>
+
+      <!-- value Column -->
+      <ng-container matColumnDef="value">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-currency-dollar i_table"></i>&nbsp;valor venta
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.value | currency : "COP" : "symbol-narrow" : "4.2-2" }}
+        </td>
+      </ng-container>
+
+      <!-- time Column -->
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-clock i_table"></i>&nbsp;hora
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.time }}</td>
+      </ng-container>
+
+      actions Column
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>
+          <i class="bi bi-gear i_table"></i>&nbsp;acciones
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <button class="btn btn-success">
+            <i class="bi bi-pencil i_actions"></i>
+          </button>
+          <button class="btn btn-danger" (click)="deleteSale(element._id)">
+            <i class="bi bi-trash i_actions"></i>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator
+      [pageSize]="10"
+      [length]="dataToDisplay.length"
+      [pageSizeOptions]="[5, 10, 20, dataToDisplay.length]"
+      showFirstLastButtons="false"
+      aria-label="Elementos por pagina"
+      color="warn"
+    >
+    </mat-paginator>
+  </section>
+</div>

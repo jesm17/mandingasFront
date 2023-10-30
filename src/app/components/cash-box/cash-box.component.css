@@ -1,0 +1,36 @@
+.containerSale {
+  background-color: #ff8d3cea;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  box-shadow: -5px 6px 7px 0px rgba(0, 0, 0, 0.14);
+}
+.viewTotalSales {
+  color: #0d0d0d;
+  font-weight: bold;
+}
+.mat-mdc-form-field-error {
+  color: #0d0d0d;
+  font-style: oblique;
+  font-weight: bold;
+}
+button:disabled {
+  display: none;
+}
+
+input.valueSale::-webkit-outer-spin-button,
+input.valueSale::-webkit-inner-spin-button {
+  display: none;
+}
+i {
+  font-size: 25px;
+  color: #f45d48;
+}
+
+.i_table {
+  color: #ff8d3cea;
+  font-size: 20px;
+}
+.i_actions {
+  font-size: 17px;
+  color: #f8f5f2;
+}
