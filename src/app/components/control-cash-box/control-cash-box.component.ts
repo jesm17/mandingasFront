@@ -17,25 +17,58 @@ export class ControlCashBoxComponent implements OnInit {
   isOpen: boolean = false;
   isDisable: boolean = false;
   idCashBox: string = '';
-
+  icon!:string
   changeStatusBoxCash() {
-    if (this.isOpen == true) {
-      this.text = 'cerrar';
-      //this.isOpen = true;
+    if (this.isOpen == false) {
+      this.cashBoxService.createCashBox().subscribe((res: any) => {
+        this.idCashBox = res._id;
+        localStorage.setItem('idCashBox', this.idCashBox);
+        this.isOpen = res.isOpen;
+        this.getTextToCashBox(this.isOpen);
+        console.log(res);
+      });
     } else {
-      this.isOpen = false;
-      this.text = 'abrir';
+   
+      const id: string | null = localStorage.getItem('idCashBox')
+        ? localStorage.getItem('idCashBox')
+        : '';
+      this.cashBoxService.closeCashBox(id).subscribe((res) => {
+        console.log(res);
+        localStorage.removeItem('idCashBox');
+        this.isOpen = false;
+        this.getTextToCashBox(this.isOpen);
+      });
     }
-    console.log(this.isOpen);
+    //console.log(this.isOpen);
   }
 
   getActiveCashBox() {
-    this.cashBoxService.getActiveCashBox().subscribe((res: any) => {
-      this.idCashBox = res._id;
-      this.isOpen = res.isOpen;
-      console.log(res);
-      console.log(this.isOpen, this.idCashBox);
-    });
-    this.changeStatusBoxCash()
+    this.cashBoxService.getActiveCashBox().subscribe(
+      (res: any) => {
+        if (res == null) {
+          this.getTextToCashBox(false);
+        } else {
+        
+          localStorage.setItem('idCashBox',res._id);
+          this.idCashBox = res._id;
+          this.isOpen = res.isOpen;
+      
+          this.getTextToCashBox(res.isOpen);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  getTextToCashBox(status: boolean) {
+    if (status === true) {
+      this.text = 'Cerrar';
+      this.icon = 'remove_shopping_cart'
+    } else {
+      this.text = 'Abrir';
+      this.icon = 'add_shopping_cart';
+    }
   }
 }

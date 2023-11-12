@@ -11,4 +11,25 @@ export class CashBoxService {
   getActiveCashBox() {
     return this.http.get(`${this.apiUrl}boxCash`);
   }
+
+  createCashBox() {
+    return this.http.post(`${this.apiUrl}boxCash`, null);
+  }
+
+  closeCashBox(id: string | null) {
+    return this.http.put(`${this.apiUrl}boxCash/${id}`, null);
+  }
+
+  getHistory() {
+    return this.http.get(`${this.apiUrl}boxCash/history`);
+  }
+
+  getfilter(year: number | string, month: number | string) {
+    return this.http.get(`${this.apiUrl}boxCash/history`, {
+      params: {
+        year: year,
+        month: month,
+      },
+    });
+  }
 }

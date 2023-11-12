@@ -1,0 +1,126 @@
+<app-control-cash-box></app-control-cash-box>
+<section class="max-vh-100 max-vw-100">
+  <div style="display: block">
+    <p>
+      <span style="color: orange">*</span> El total de ventas por mes se calcula
+      por el total de venta de las cajas cerradas
+    </p>
+    <canvas
+      baseChart
+      [type]="'line'"
+      [data]="lineChartData"
+      [legend]="lineChartLegend"
+      id="chart"
+    >
+    </canvas>
+  </div>
+  <section class="w-100">
+    <div class=" " id="filter_container">
+      <div class="m-1" id="filter_option">
+        <mat-form-field id="month">
+          <mat-label>Mes</mat-label>
+          <mat-select [formControl]="selectFormControl">
+            <mat-option
+              *ngFor="let x of monthNames; let i = index"
+              value="{{ i + 1 }}"
+              (click)="getFilterDate()"
+              >{{ x }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="m-1" id="filter_option">
+        <mat-form-field>
+          <mat-label>año</mat-label>
+          <input
+            matInput
+            type="number"
+            [formControl]="year"
+            max="{{ currentYear }}"
+          />
+        </mat-form-field>
+      </div>
+      <div class="m-1" id="filter_option">
+        <button (click)="resetChart()" mat-raised-button color="warn">
+          Restablecer
+        </button>
+      </div>
+    </div>
+  </section>
+  <section class="tableSection">
+    <table
+      mat-table
+      [dataSource]="cahsBox"
+      class="mat-elevation-z8"
+      matSort
+      matSortActive="created"
+    >
+      <!--- Note that these columns can be defined in any order.
+    The actual rendered columns are set as a property on the row definition" -->
+
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>
+          <i class="bi bi-list-ol i_table"></i>
+        </th>
+        <td mat-cell *matCellDef="let element; let i = index">{{ i + 1 }}</td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="Mes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-file-person-fill i_table"></i>&nbsp;Mes
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.monthName }}</td>
+      </ng-container>
+
+      <!-- value Column -->
+      <ng-container matColumnDef="Dia">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-currency-dollar i_table"></i>&nbsp;Dia
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.day }}
+        </td>
+      </ng-container>
+
+      <!-- time Column -->
+      <ng-container matColumnDef="Vendido">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-clock i_table"></i>&nbsp;Vendido
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{
+            element.totalSales | currency : "COP" : "symbol-narrow" : "4.2-2"
+          }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="Abierto">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-gear i_table"></i>Abierto
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.openTime }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Cerrado">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <i class="bi bi-clock i_table"></i>Cerrado
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.closedTime }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons="false"
+      aria-label="Elementos por pagina"
+      color="warn"
+    >
+    </mat-paginator>
+  </section>
+</section>

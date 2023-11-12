@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-sm bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">Mandingas</a>
     <button
@@ -14,17 +14,26 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item mx-1 my-1">
           <button
             mat-raised-button
             color="warn"
             (click)="changeStatusBoxCash()"
             disabled="{{ isDisable }}"
           >
+            <mat-icon>
+              {{ icon }}
+            </mat-icon>
             {{ text }}
           </button>
         </li>
-        
+
+        <li class="nav-item mx-1 my-1" *ngIf="!isOpen">
+          <button mat-raised-button color="warn" routerLink="history-sales">
+            Historial de ventas
+            <mat-icon> format_list_bulleted </mat-icon>
+          </button>
+        </li>
       </ul>
     </div>
   </div>

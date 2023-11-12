@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://localhost:3000/',
+  apiUrl: 'https://qdt65wf2-3000.use2.devtunnels.ms/',
 };

@@ -13,6 +13,12 @@ import { MatSortModule } from '@angular/material/sort';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
+import { HistorySalesComponent } from './components/history-sales/history-sales.component';
+import { NgChartsModule } from 'ng2-charts';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 const importModules = [
   MatButtonModule,
   MatFormFieldModule,
@@ -23,9 +29,19 @@ const importModules = [
   MatPaginatorModule,
   MatSortModule,
   HttpClientModule,
+  MatIconModule,
+  NgChartsModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatSelectModule,
 ];
 @NgModule({
-  declarations: [AppComponent, ControlCashBoxComponent, CashBoxComponent],
+  declarations: [
+    AppComponent,
+    ControlCashBoxComponent,
+    CashBoxComponent,
+    HistorySalesComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -34,5 +50,6 @@ const importModules = [
   ],
   providers: [],
   bootstrap: [AppComponent],
+  
 })
 export class AppModule {}

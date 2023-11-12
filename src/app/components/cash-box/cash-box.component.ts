@@ -1,7 +1,6 @@
 import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { Observable, ReplaySubject } from 'rxjs';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
@@ -20,6 +19,7 @@ export class CashBoxComponent implements OnInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
   }
 
   constructor(private saleService: SalesService) {
@@ -36,7 +36,7 @@ export class CashBoxComponent implements OnInit {
 
   dataToDisplay = [...ELEMENT_DATA];
 
-  dataSource = new MatTableDataSource<Sale>();
+  dataSource = new MatTableDataSource<Sale>;
 
   totalSales: number = 0;
 
@@ -55,6 +55,8 @@ export class CashBoxComponent implements OnInit {
     valueSale: this.valueSale,
   });
 
+  idToUpdate!: string;
+
   ngOnInit(): void {
     this.getSaleOfDay();
   }
@@ -65,8 +67,8 @@ export class CashBoxComponent implements OnInit {
         this.dataSource.data = res;
 
         this.dataToDisplay = res;
-        console.log(this.dataToDisplay);
-        this.getTotalSales();
+
+        this.getTotalOfSales();
       },
       (err) => {
         console.log(err);
@@ -74,12 +76,23 @@ export class CashBoxComponent implements OnInit {
     );
   }
 
+  // getActiveCashBox(){
+  //   try {
+  //     this.id_boxCash = localStorage.getItem('idCashBox')
+  //   } catch (error) {
+
+  //   }
+  // }
+
   addSale() {
+    const id = localStorage.getItem('idCashBox')
+      ? localStorage.getItem('idCashBox')
+      : '';
     const sale: Sale = {
       value: this.formForSale.value.valueSale,
       clientName: this.formForSale.value.clientName,
       time: '',
-      boxCahsId: '65358088f3d6ed984ef79303',
+      boxCahsId: id,
     };
 
     let date = new Date();
@@ -87,27 +100,16 @@ export class CashBoxComponent implements OnInit {
     sale.time =
       date.toLocaleDateString() + ' ' + date.toLocaleTimeString('es-CO');
 
-    this.dataToDisplay = [...this.dataToDisplay, sale];
+    this.saleService.saveSale(sale).subscribe((res: any) => {
+      this.dataToDisplay = [...this.dataToDisplay, res];
+      this.dataSource.data = this.dataToDisplay;
+      this.getTotalOfSales();
 
-    this.dataSource.data = this.dataToDisplay;
-
-    this.getTotalSales();
-
-    this.formForSale.reset();
-
-    this.valueSale.setValue(0);
-
-    this.saleService.saveSale(sale).subscribe({
-      next(res) {
-        console.log(res);
-      },
-      error(err) {
-        console.log(err);
-      },
+      this.restoreSale();
     });
   }
 
-  getTotalSales() {
+  getTotalOfSales() {
     this.totalSales = 0;
     this.dataToDisplay.forEach((x: any) => (this.totalSales += x.value));
   }
@@ -124,7 +126,66 @@ export class CashBoxComponent implements OnInit {
     // console.log(filter);
     this.dataToDisplay = filter;
     this.dataSource.data = this.dataToDisplay;
-    this.getTotalSales();
+    this.saleService.deleteSale(i).subscribe({
+      next(value) {
+        console.log(value);
+      },
+    });
+    this.getTotalOfSales();
+  }
+
+  getOneSale(id: string) {
+    this.saleService.getOneSales(id).subscribe(
+      (res: any) => {
+        this.valueSale.setValue(res.value);
+        this.clientName.setValue(res.clientName);
+        this.idToUpdate = id;
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  updateSale() {
+    let date = new Date();
+
+    let filter: any = [];
+    const id = localStorage.getItem('idCashBox')
+      ? localStorage.getItem('idCashBox')
+      : '';
+    const sale: Sale = {
+      value: this.formForSale.value.valueSale,
+      clientName: this.formForSale.value.clientName,
+      time: '',
+      boxCahsId: id,
+      _id: this.idToUpdate,
+    };
+
+    sale.time =
+      date.toLocaleDateString() + ' ' + date.toLocaleTimeString('es-CO');
+
+    this.dataToDisplay.filter((x: any) => {
+      if ((x._id != sale._id) == true) {
+        filter.push(x);
+      }
+    });
+
+    this.dataToDisplay = filter;
+
+    this.dataToDisplay = [...this.dataToDisplay, sale];
+
+    this.dataSource.data = this.dataToDisplay;
+
+    this.restoreSale();
+
+    this.getTotalOfSales();
+
+    this.idToUpdate = '';
+
+    this.saleService.updateSale(sale._id!, sale).subscribe((res) => {
+      console.log(res);
+    });
   }
 
   messageErrorValue() {
@@ -137,6 +198,7 @@ export class CashBoxComponent implements OnInit {
     }
     return text;
   }
+
   messageErrorClient() {
     let text;
 
@@ -150,16 +212,8 @@ export class CashBoxComponent implements OnInit {
     return text;
   }
 
-  @HostListener('window:keydown.enter', ['$event'])
-  handleKeyDown(event: KeyboardEvent) {
-    let val = this.valueSale.value;
-    if (
-      val != 0 &&
-      val !== null &&
-      !this.valueSale.errors &&
-      !this.clientName.errors
-    ) {
-      this.addSale();
-    }
+  restoreSale() {
+    this.formForSale.reset();
+    this.valueSale.setValue(0);
   }
 }
